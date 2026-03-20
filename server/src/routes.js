@@ -116,6 +116,67 @@ function createRouter({ userController, authenticateJwt }) {
   routes.get("/api/users", authenticateJwt, userController.list);
   routes.post("/api/users", authenticateJwt, userController.create);
 
+  /**
+   * @openapi
+   * /api/users/{id}:
+   *   put:
+   *     summary: Update user
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             minProperties: 1
+   *             properties:
+   *               name: { type: string }
+   *               email: { type: string }
+   *               type: { type: string }
+   *               password: { type: string }
+   *     responses:
+   *       200:
+   *         description: Updated user without password
+   *       400:
+   *         description: Validation error
+   *       404:
+   *         description: User not found
+   *       409:
+   *         description: Email already registered
+   *       401:
+   *         description: Missing or invalid token
+   *   delete:
+   *     summary: Delete user
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       204:
+   *         description: User removed
+   *       404:
+   *         description: User not found
+   *       401:
+   *         description: Missing or invalid token
+   */
+  routes.put("/api/users/:id", authenticateJwt, userController.update);
+  routes.delete("/api/users/:id", authenticateJwt, userController.remove);
+
   return routes;
 }
 

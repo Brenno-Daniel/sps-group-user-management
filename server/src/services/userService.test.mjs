@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
   InMemoryUserRepository,
   EmailAlreadyExistsError,
+  UserNotFoundError,
 } from "../repositories/inMemoryUserRepository.js";
 import { UserService, ValidationError } from "./userService.js";
 
@@ -100,5 +101,97 @@ describe("UserService.create", () => {
         type: "user",
       }),
     ).toThrow(ValidationError);
+  });
+});
+
+describe("UserService.updateById", () => {
+  let repository;
+  let userService;
+
+  beforeEach(() => {
+    repository = new InMemoryUserRepository();
+    userService = new UserService(repository);
+  });
+
+  it("Should return updated user without password When id exists and payload is valid", () => {
+    const created = userService.create({
+      name: "Dan",
+      email: "dan@spsgroup.com.br",
+      type: "user",
+      password: "p",
+    });
+
+    const updated = userService.updateById(created.id, { name: "Daniel" });
+
+    expect(updated.name).toBe("Daniel");
+    expect(updated.email).toBe("dan@spsgroup.com.br");
+    expect(updated).not.toHaveProperty("password");
+  });
+
+  it("Should reject When user id does not exist", () => {
+    expect(() =>
+      userService.updateById("00000000-0000-0000-0000-000000000099", {
+        name: "Ghost",
+      }),
+    ).toThrow(UserNotFoundError);
+  });
+
+  it("Should reject When new email is already taken by another user", () => {
+    const first = userService.create({
+      name: "a",
+      email: "a-upd@spsgroup.com.br",
+      type: "user",
+      password: "1",
+    });
+    userService.create({
+      name: "b",
+      email: "b-upd@spsgroup.com.br",
+      type: "user",
+      password: "1",
+    });
+
+    expect(() =>
+      userService.updateById(first.id, { email: "b-upd@spsgroup.com.br" }),
+    ).toThrow(EmailAlreadyExistsError);
+  });
+
+  it("Should reject When no fields are provided", () => {
+    const created = userService.create({
+      name: "Eve",
+      email: "eve@spsgroup.com.br",
+      type: "user",
+      password: "1",
+    });
+
+    expect(() => userService.updateById(created.id, {})).toThrow(ValidationError);
+  });
+});
+
+describe("UserService.removeById", () => {
+  let repository;
+  let userService;
+
+  beforeEach(() => {
+    repository = new InMemoryUserRepository();
+    userService = new UserService(repository);
+  });
+
+  it("Should remove user When id exists", () => {
+    const created = userService.create({
+      name: "Frank",
+      email: "frank@spsgroup.com.br",
+      type: "user",
+      password: "1",
+    });
+
+    userService.removeById(created.id);
+
+    expect(userService.list().find((u) => u.id === created.id)).toBeUndefined();
+  });
+
+  it("Should reject When id does not exist", () => {
+    expect(() =>
+      userService.removeById("00000000-0000-0000-0000-000000000099"),
+    ).toThrow(UserNotFoundError);
   });
 });

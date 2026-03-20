@@ -22,6 +22,35 @@ class UserService {
     return this._toPublicUser(user);
   }
 
+  updateById(id, payload) {
+    const { name, email, type, password } = payload ?? {};
+    this._assertUpdatePayload({ name, email, type, password });
+    const user = this._users.update(id, { name, email, type, password });
+    return this._toPublicUser(user);
+  }
+
+  removeById(id) {
+    this._users.delete(id);
+  }
+
+  _assertUpdatePayload({ name, email, type, password }) {
+    const entries = [
+      ["name", name],
+      ["email", email],
+      ["type", type],
+      ["password", password],
+    ];
+    const provided = entries.filter(([, v]) => v !== undefined);
+    if (provided.length === 0) {
+      throw new ValidationError();
+    }
+    for (const [, value] of provided) {
+      if (String(value).trim() === "") {
+        throw new ValidationError();
+      }
+    }
+  }
+
   _assertCreateFields({ name, email, type, password }) {
     const values = [name, email, type, password];
     const invalid = values.some(

@@ -1,5 +1,6 @@
 const {
   EmailAlreadyExistsError,
+  UserNotFoundError,
 } = require("../repositories/inMemoryUserRepository");
 const { ValidationError } = require("../services/userService");
 
@@ -24,6 +25,36 @@ function createUserController(userService) {
         }
         if (err instanceof ValidationError) {
           return res.status(400).json({ error: "validation_error" });
+        }
+        next(err);
+      }
+    },
+
+    update: (req, res, next) => {
+      try {
+        const user = userService.updateById(req.params.id, req.body);
+        res.json({ user });
+      } catch (err) {
+        if (err instanceof UserNotFoundError) {
+          return res.status(404).json({ error: "user_not_found" });
+        }
+        if (err instanceof EmailAlreadyExistsError) {
+          return res.status(409).json({ error: "email_already_exists" });
+        }
+        if (err instanceof ValidationError) {
+          return res.status(400).json({ error: "validation_error" });
+        }
+        next(err);
+      }
+    },
+
+    remove: (req, res, next) => {
+      try {
+        userService.removeById(req.params.id);
+        res.sendStatus(204);
+      } catch (err) {
+        if (err instanceof UserNotFoundError) {
+          return res.status(404).json({ error: "user_not_found" });
         }
         next(err);
       }
