@@ -19,7 +19,7 @@ flowchart LR
 
 | Layer        | Responsibility |
 | ------------ | -------------- |
-| **Controller** | HTTP: parse request, call service, map response/status codes. |
+| **Controller** | HTTP: parse request, call service, map response/status codes (e.g. `createUserController`). |
 | **Service**    | Business rules, orchestration, validation beyond persistence (e.g. `AuthService` issues JWT on login). |
 | **Repository** | Data access abstraction; in-memory implementation with Repository pattern. |
 
@@ -38,3 +38,7 @@ flowchart LR
 ## API documentation
 
 - **Swagger UI:** `GET /api-docs` (development server URL may vary by `PORT`).
+
+## Application bootstrap
+
+- `src/app.js` exposes `createApp(options)` (Express + Swagger + router) for production and tests; `src/index.js` loads env vars and calls `listen`.
