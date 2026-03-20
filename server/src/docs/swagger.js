@@ -24,6 +24,15 @@ function buildSwaggerSpec() {
         { name: "Auth", description: "Authentication" },
         { name: "Users", description: "User management" },
       ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        },
+      },
     },
     apis: [path.join(__dirname, "..", "routes.js")],
   });

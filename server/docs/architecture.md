@@ -25,7 +25,7 @@ flowchart LR
 
 **Persistence:** `InMemoryUserRepository` (`src/repositories/inMemoryUserRepository.js`) keeps users in process memory, indexes emails for uniqueness, and seeds the required admin user on construction.
 
-**Middlewares** handle cross-cutting concerns (e.g. JWT authentication) before controllers.
+**Middlewares** handle cross-cutting concerns before controllers. `createAuthMiddleware()` (`src/middlewares/authMiddleware.js`) validates `Authorization: Bearer <JWT>`, maps claims to `req.user`, and responds with `401` when the token is missing or invalid.
 
 **docs** (under `src/docs`) holds OpenAPI / Swagger JSDoc sources and shared spec helpers.
 
