@@ -23,6 +23,8 @@ flowchart LR
 | **Service**    | Business rules, orchestration, validation beyond persistence. |
 | **Repository** | Data access abstraction; in-memory implementation with Repository pattern. |
 
+**Persistence:** `InMemoryUserRepository` (`src/repositories/inMemoryUserRepository.js`) keeps users in process memory, indexes emails for uniqueness, and seeds the required admin user on construction.
+
 **Middlewares** handle cross-cutting concerns (e.g. JWT authentication) before controllers.
 
 **docs** (under `src/docs`) holds OpenAPI / Swagger JSDoc sources and shared spec helpers.
