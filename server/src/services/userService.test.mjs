@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { InMemoryUserRepository } from "../repositories/inMemoryUserRepository.js";
-import { UserService } from "./userService.js";
+import {
+  InMemoryUserRepository,
+  EmailAlreadyExistsError,
+} from "../repositories/inMemoryUserRepository.js";
+import { UserService, ValidationError } from "./userService.js";
 
 describe("UserService.list", () => {
   let repository;
@@ -38,5 +41,64 @@ describe("UserService.list", () => {
       "admin@spsgroup.com.br",
       "alice@spsgroup.com.br",
     ]);
+  });
+});
+
+describe("UserService.create", () => {
+  let repository;
+  let userService;
+
+  beforeEach(() => {
+    repository = new InMemoryUserRepository();
+    userService = new UserService(repository);
+  });
+
+  it("Should return new user without password When payload is valid and email is unique", () => {
+    const created = userService.create({
+      name: "Bob",
+      email: "bob@spsgroup.com.br",
+      type: "user",
+      password: "secret",
+    });
+
+    expect(created).toMatchObject({
+      name: "Bob",
+      email: "bob@spsgroup.com.br",
+      type: "user",
+    });
+    expect(created.id).toBeDefined();
+    expect(created).not.toHaveProperty("password");
+  });
+
+  it("Should reject When email is already registered", () => {
+    expect(() =>
+      userService.create({
+        name: "X",
+        email: "admin@spsgroup.com.br",
+        type: "user",
+        password: "x",
+      }),
+    ).toThrow(EmailAlreadyExistsError);
+  });
+
+  it("Should reject When same email matches with different casing", () => {
+    expect(() =>
+      userService.create({
+        name: "X",
+        email: "ADMIN@SPSGROUP.COM.BR",
+        type: "user",
+        password: "x",
+      }),
+    ).toThrow(EmailAlreadyExistsError);
+  });
+
+  it("Should reject When a required field is missing", () => {
+    expect(() =>
+      userService.create({
+        name: "X",
+        email: "new@spsgroup.com.br",
+        type: "user",
+      }),
+    ).toThrow(ValidationError);
   });
 });

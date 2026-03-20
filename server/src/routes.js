@@ -81,8 +81,40 @@ function createRouter({ userController, authenticateJwt }) {
    *                       type: { type: string }
    *       401:
    *         description: Missing or invalid token
+   *   post:
+   *     summary: Create user
+   *     tags:
+   *       - Users
+   *     security:
+   *       - bearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - name
+   *               - email
+   *               - type
+   *               - password
+   *             properties:
+   *               name: { type: string }
+   *               email: { type: string }
+   *               type: { type: string }
+   *               password: { type: string }
+   *     responses:
+   *       201:
+   *         description: Created user without password
+   *       400:
+   *         description: Validation error
+   *       409:
+   *         description: Email already registered
+   *       401:
+   *         description: Missing or invalid token
    */
   routes.get("/api/users", authenticateJwt, userController.list);
+  routes.post("/api/users", authenticateJwt, userController.create);
 
   return routes;
 }
