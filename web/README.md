@@ -1,30 +1,30 @@
-----------------------------------
-ESPANHOL
-----------------------------------
+# SPS — Front-end (React)
 
-## PRUEBA SPS REACT
+## Requisitos
 
-- Crear un CRUD de usuarios
+- Node.js 18+
+- API em execução (variável `REACT_APP_SERVER_URL`)
 
-## Reglas
+## Configuração
 
-- Crear la página de inicio de sesión (signIn) para autenticar al usuario (usar el usuario previamente registrado para validar).
-- Se puede utilizar cualquier tipo de almacenamiento para guardar el token.
-- Solo será posible registrar y/o visualizar usuarios si el usuario está autenticado.
-- Consumir la API creada anteriormente (test-sps-server).
+```bash
+cp .env.example .env
+```
 
+Ajuste `REACT_APP_SERVER_URL` (ex.: `http://localhost:3000`).
 
-----------------------------------
-PORTUGUÊS
-----------------------------------
+## Scripts
 
-# SPS REACT TEST
+| Comando        | Descrição              |
+| -------------- | ---------------------- |
+| `npm start`    | Servidor de desenvolvimento |
+| `npm run build` | Build de produção     |
+| `npm run test` | Testes unitários (Vitest + RTL) |
+| `npm run test:watch` | Vitest em modo watch |
+| `npm run format` | Prettier nos arquivos `src` |
 
-- Criar um CRUD de usuários
+## Stack
 
-# Regras
-
-- Criar a página de signIn para fazer a autenticação do usuário (Usar o usuário previamente cadastrado para validar)
-- Pode usar qualquer tipo de storage para guardar o token
-- Só será possível cadastrar e/ou visualizar os usuários se estiver autenticado
-- Chamar a API que foi criada anteriormente (test-sps-server)
+- React (CRA), React Router, Tailwind CSS, Framer Motion, Lucide React
+- Autenticação JWT via `AuthContext` e `localStorage`
+- Rotas: `/login` (público), `/users` (protegida)
