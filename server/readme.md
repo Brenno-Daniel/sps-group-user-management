@@ -1,52 +1,96 @@
-----------------------------------
-ESPANHOL
-----------------------------------
+# SPS User Management — API (server)
 
-## Prueba NODE
+Express REST API with **layered architecture** (controller → service → in-memory repository), **JWT** authentication, **Swagger UI**, and **Vitest** tests.
 
-- Crear un CRUD (API REST) en Node para el registro de usuarios.
-- Para la creación de la prueba, utilizar un repositorio falso de usuarios (puede ser en memoria).
+## Requirements
 
-## Reglas
+- Node.js 18+ (recommended)
+- npm
 
-- Debe existir un usuario administrador previamente registrado para utilizar la autenticación (no es necesario cifrar la contraseña):
-{
-  "name": "admin",
-  "email": "admin@spsgroup.com.br",
-  "type": "admin",
-  "password": "1234"
-}
+## Setup
 
-- Crear una ruta de autenticación (token Jwt).
-- Las rutas de la API solo pueden ser ejecutadas si el usuario está autenticado.
-- Debe ser posible añadir usuarios con los campos: email, nombre, type, password.
-- No debe ser posible registrar un correo electrónico ya existente.
-- Debe ser posible eliminar usuarios.
-- Debe ser posible modificar los datos de un usuario.
+```bash
+cd server
+npm install
+```
 
+Copy environment variables:
 
-----------------------------------
-PORTUGUÊS
-----------------------------------
+```bash
+cp .env.example .env
+```
 
-# Teste NODE
+Edit `.env` and set at least:
 
-- Criar um CRUD (API REST) em node para cadastro de usuários
-- Para a criação do teste utilizar um repositório fake dos usuários. (Pode ser em memória)
+| Variable     | Description                          |
+| ------------ | ------------------------------------ |
+| `PORT`       | HTTP port (default `3000`)           |
+| `JWT_SECRET` | Secret for signing/verifying JWTs    |
 
-## Regras
+## Scripts
 
-- Deve existir um usuário admin previamente cadastrado para utilizar autenticação (não precisa criptografar a senha);
-  {
-    name: "admin",
-    email: "admin@spsgroup.com.br",
-    type: "admin"
-    password: "1234"
-  }
+| Command            | Description                |
+| ------------------ | -------------------------- |
+| `npm run dev`      | Dev server with nodemon    |
+| `npm test`         | Run Vitest once            |
+| `npm run test:watch` | Vitest watch mode        |
 
-- Criar rota de autenticação (Jwt token)
-- As rotas da API só podem ser executadas se estiver autenticada
-- Deve ser possível adicionar usuários. Campos: email, nome, type, password
-- Não deve ser possível cadastrar o e-mail já cadastrado
-- Deve ser possível remover usuário
-- Deve ser possível alterar os dados do usuário
+## Running
+
+```bash
+npm run dev
+```
+
+- API base: `http://localhost:<PORT>` (see `.env`)
+- **Swagger UI:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs) (adjust port if needed)
+
+## Authentication
+
+1. **Login (public):** `POST /api/auth/login`  
+   Body: `{ "email": "...", "password": "..." }`  
+   Response: `{ "token": "<JWT>", "user": { "id", "name", "email", "type" } }`
+
+2. **Protected routes:** send header  
+   `Authorization: Bearer <token>`
+
+### Seeded admin (in-memory)
+
+| Field    | Value                    |
+| -------- | ------------------------ |
+| email    | `admin@spsgroup.com.br`  |
+| password | `1234`                   |
+| type     | `admin`                  |
+
+## API summary
+
+| Method | Path               | Auth   | Description        |
+| ------ | ------------------ | ------ | ------------------ |
+| GET    | `/`                | No     | Health check       |
+| POST   | `/api/auth/login`  | No     | JWT login          |
+| GET    | `/api/me`          | Bearer | Current user       |
+| GET    | `/api/users`       | Bearer | List users         |
+| POST   | `/api/users`       | Bearer | Create user        |
+| PUT    | `/api/users/:id`   | Bearer | Update user        |
+| DELETE | `/api/users/:id`   | Bearer | Delete user        |
+
+Error payloads commonly use `{ "error": "<code>" }` (e.g. `validation_error`, `email_already_exists`, `user_not_found`, `invalid_credentials`).
+
+## Tests
+
+- Unit and middleware tests live next to sources (`*.test.mjs`).
+- Integration tests use **supertest** (`users.integration.test.mjs`).
+
+```bash
+npm test
+```
+
+## Documentation
+
+- [Architecture](docs/architecture.md) — layers and conventions
+- OpenAPI spec is generated from JSDoc in `src/routes.js` and served at `/api-docs`
+
+---
+
+## Original assessment brief
+
+The Portuguese/Spanish challenge text is in [docs/assessment-brief.md](docs/assessment-brief.md).

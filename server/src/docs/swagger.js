@@ -10,8 +10,12 @@ function buildSwaggerSpec() {
       info: {
         title: "SPS User Management API",
         version: "1.0.0",
-        description:
+        description: [
           "REST API for user CRUD with JWT authentication (technical assessment).",
+          "",
+          "Flow: call `POST /api/auth/login` with email and password to receive a JWT, then send `Authorization: Bearer <token>` on protected routes.",
+          "Interactive docs: `GET /api-docs` when the server is running.",
+        ].join("\n"),
       },
       servers: [
         {

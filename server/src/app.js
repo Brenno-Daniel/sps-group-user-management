@@ -5,13 +5,18 @@ const { buildSwaggerSpec } = require("./docs/swagger");
 const { createRouter } = require("./routes");
 const { InMemoryUserRepository } = require("./repositories/inMemoryUserRepository");
 const { UserService } = require("./services/userService");
+const { AuthService } = require("./services/authService");
 const { createUserController } = require("./controllers/userController");
+const { createAuthController } = require("./controllers/authController");
 const { createAuthMiddleware } = require("./middlewares/authMiddleware");
 
 function createApp(options = {}) {
   const repository = options.userRepository ?? new InMemoryUserRepository();
   const userService = options.userService ?? new UserService(repository);
+  const authService =
+    options.authService ?? new AuthService(repository);
   const userController = options.userController ?? createUserController(userService);
+  const authController = options.authController ?? createAuthController(authService);
   const authenticateJwt =
     options.authenticateJwt ?? createAuthMiddleware();
 
@@ -24,6 +29,7 @@ function createApp(options = {}) {
 
   app.use(
     createRouter({
+      authController,
       userController,
       authenticateJwt,
     }),

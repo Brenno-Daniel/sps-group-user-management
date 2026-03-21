@@ -1,7 +1,52 @@
 const { Router } = require("express");
 
-function createRouter({ userController, authenticateJwt }) {
+function createRouter({ authController, userController, authenticateJwt }) {
   const routes = Router();
+
+  /**
+   * @openapi
+   * /api/auth/login:
+   *   post:
+   *     summary: Sign in and obtain JWT
+   *     tags:
+   *       - Auth
+   *     security: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - email
+   *               - password
+   *             properties:
+   *               email:
+   *                 type: string
+   *                 format: email
+   *               password:
+   *                 type: string
+   *     responses:
+   *       200:
+   *         description: JWT and public user profile
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 token:
+   *                   type: string
+   *                 user:
+   *                   type: object
+   *                   properties:
+   *                     id: { type: string }
+   *                     name: { type: string }
+   *                     email: { type: string }
+   *                     type: { type: string }
+   *       401:
+   *         description: Invalid email or password
+   */
+  routes.post("/api/auth/login", authController.login);
 
   /**
    * @openapi

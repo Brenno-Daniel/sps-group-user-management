@@ -38,6 +38,7 @@ flowchart LR
 ## API documentation
 
 - **Swagger UI:** `GET /api-docs` (development server URL may vary by `PORT`).
+- **Login:** `POST /api/auth/login` (public) returns a JWT; all other business routes require `Authorization: Bearer <JWT>` except `GET /` (health).
 
 ## Application bootstrap
 

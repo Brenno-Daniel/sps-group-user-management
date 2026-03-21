@@ -3,7 +3,11 @@ import request from "supertest";
 import jwt from "jsonwebtoken";
 import { createApp } from "./app.js";
 import { createAuthMiddleware } from "./middlewares/authMiddleware.js";
-import { ADMIN_USER_ID } from "./repositories/inMemoryUserRepository.js";
+import { AuthService } from "./services/authService.js";
+import {
+  ADMIN_USER_ID,
+  InMemoryUserRepository,
+} from "./repositories/inMemoryUserRepository.js";
 
 const SECRET = "integration-test-secret";
 
@@ -18,6 +22,49 @@ function createToken() {
     { expiresIn: "1h" },
   );
 }
+
+describe("POST /api/auth/login", () => {
+  let app;
+
+  beforeEach(() => {
+    const userRepository = new InMemoryUserRepository();
+    app = createApp({
+      userRepository,
+      authService: new AuthService(userRepository, {
+        jwtSecret: SECRET,
+        expiresIn: "1h",
+      }),
+      authenticateJwt: createAuthMiddleware({ jwtSecret: SECRET }),
+    });
+  });
+
+  it("Should return token When admin credentials are valid", async () => {
+    const res = await request(app).post("/api/auth/login").send({
+      email: "admin@spsgroup.com.br",
+      password: "1234",
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.body.token).toBeDefined();
+    expect(res.body.user).toMatchObject({
+      id: ADMIN_USER_ID,
+      name: "admin",
+      email: "admin@spsgroup.com.br",
+      type: "admin",
+    });
+    expect(res.body.user).not.toHaveProperty("password");
+  });
+
+  it("Should return 401 When password is wrong", async () => {
+    const res = await request(app).post("/api/auth/login").send({
+      email: "admin@spsgroup.com.br",
+      password: "wrong",
+    });
+
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe("invalid_credentials");
+  });
+});
 
 describe("GET /api/users", () => {
   let app;
