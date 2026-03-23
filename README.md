@@ -40,6 +40,16 @@ Open the app URL printed by CRA (usually `http://localhost:3001` if the API uses
 | **Backend** | Node.js, Express, JWT, Swagger, Vitest, supertest |
 | **Front-end** | React (CRA), React Router, Tailwind CSS, Axios, Vitest + RTL |
 
+## 🤖 AI-assisted development
+
+Parts of this project were built with **AI-assisted tooling** to accelerate development (exploration, scaffolding, tests, and docs) — **design, security, and correctness remain human-reviewed**.
+
+| Tool | Role |
+| ---- | ---- |
+| **[Cursor](https://cursor.com)** — **Composer** (incl. Composer 2) | Primary editor workflow for implementation, refactors, and iteration |
+| **MCP Context7** | Grounded access to **up-to-date** technical documentation, APIs, and framework behavior |
+| **Google Gemini** | Structuring and refining **prompts** for clearer, more effective requests |
+
 ## 📚 Deeper docs
 
 | | |
@@ -49,4 +59,4 @@ Open the app URL printed by CRA (usually `http://localhost:3001` if the API uses
 
 ---
 
-_Made with care for SPS Group — clear UX, solid API contracts, and tests where it matters._
+_Made with care for SPS Group — clear UX, solid API contracts, tests where it matters, and transparency about how the work was accelerated (see **AI-assisted development** above)._

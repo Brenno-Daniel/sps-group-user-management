@@ -14,6 +14,8 @@ Express REST API with **layered architecture** (controller → service → in-me
 | Testing | **Vitest** 3, **supertest** |
 | Dev | **nodemon** (inspect on port 7000) |
 
+> **🤖 AI-assisted development:** This package was developed with help from **AI tooling** to speed up delivery — mainly **[Cursor](https://cursor.com)** with **Composer / Composer 2**, **MCP Context7** for current docs and APIs, and **Google Gemini** for prompt structuring. All changes were reviewed before shipping.
+
 ## 📋 Requirements
 
 - Node.js 18+ (recommended)

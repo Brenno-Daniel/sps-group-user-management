@@ -23,6 +23,8 @@ React SPA for managing SPS Group user accounts: **sign-in**, **JWT** session, **
 | Tests | **Vitest** 3, **React Testing Library**, **jsdom** |
 | Tooling | **Prettier**, **Vite** (Vitest only) |
 
+> **🤖 AI-assisted development:** This app was built with **AI tooling** to accelerate development — primarily **[Cursor](https://cursor.com)** (**Composer 2**), **MCP Context7** for up-to-date documentation and framework references, and **Google Gemini** for optimizing prompts. Human review applies to UI, auth, and API usage.
+
 ## 📋 Requirements
 
 - Node.js 18+
