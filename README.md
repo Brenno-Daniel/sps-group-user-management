@@ -2,6 +2,14 @@
 
 Monorepo for the **SPS Group user management** system: an **Express** REST API and a **React** web app for administrators to authenticate and **list, create, edit, and delete** users (with **JWT** protection and client-side **search**).
 
+**🌐 Live apps**
+
+| | Link |
+| --- | --- |
+| **Front-end (Vercel)** | [**sps-group-user-management.vercel.app**](https://sps-group-user-management.vercel.app) — *SPS — Gerenciamento de Usuários* |
+| **API (Render)** | [**sps-group-user-management-server.onrender.com**](https://sps-group-user-management-server.onrender.com/) |
+| **Swagger UI (Render)** | [**…/api-docs**](https://sps-group-user-management-server.onrender.com/api-docs) — interactive OpenAPI (set `PUBLIC_BASE_URL` on the server so requests default to this host) |
+
 ## 📁 What’s in this repo
 
 | Folder | Description |

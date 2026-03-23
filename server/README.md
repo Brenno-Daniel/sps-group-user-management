@@ -2,6 +2,15 @@
 
 Express REST API with **layered architecture** (controller → service → in-memory repository), **JWT** authentication, **Swagger UI**, and **Vitest** tests.
 
+## 🌐 Published deployment (Render)
+
+| | |
+| --- | --- |
+| **API base** | [https://sps-group-user-management-server.onrender.com/](https://sps-group-user-management-server.onrender.com/) |
+| **Swagger UI** | [https://sps-group-user-management-server.onrender.com/api-docs](https://sps-group-user-management-server.onrender.com/api-docs) |
+
+On Render, set **`PUBLIC_BASE_URL`** to `https://sps-group-user-management-server.onrender.com` (no trailing slash) so Swagger’s **Try it out** uses the public HTTPS origin instead of `localhost`.
+
 ## ✨ Tech stack
 
 | Layer | Technology |
@@ -44,10 +53,11 @@ cp .env.example .env
 
 Edit `.env` and set at least:
 
-| Variable     | Description                          |
-| ------------ | ------------------------------------ |
-| `PORT`       | HTTP port (default `3000`)           |
-| `JWT_SECRET` | Secret for signing/verifying JWTs    |
+| Variable          | Description |
+| ----------------- | ----------- |
+| `PORT`            | HTTP port (default `3000`) |
+| `JWT_SECRET`      | Secret for signing/verifying JWTs |
+| `PUBLIC_BASE_URL` | Optional. Public origin **without** trailing slash (e.g. `https://…onrender.com`). Used in OpenAPI **servers** so Swagger UI targets the correct host in production. |
 
 ## 📜 Scripts
 
@@ -73,10 +83,10 @@ npm run dev
 npm start
 ```
 
-Ensure `.env` exists with `PORT` and `JWT_SECRET` before `npm start` in production.
+Ensure `.env` exists with `PORT` and `JWT_SECRET` before `npm start` in production. For deployed hosts, add **`PUBLIC_BASE_URL`** so Swagger matches the public URL.
 
-- API base: `http://localhost:<PORT>` (see `.env`)
-- **Swagger UI:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs) (adjust port if needed)
+- Local API: `http://localhost:<PORT>` (see `.env`)
+- Local **Swagger UI:** `http://localhost:<PORT>/api-docs`
 
 ## 🔑 Authentication
 

@@ -2,6 +2,8 @@
 
 React SPA for managing SPS Group user accounts: **sign-in**, **JWT** session, **CRUD** on users, and a **debounced search** — all talking to the REST API in [`/server`](../server/README.md).
 
+**🌐 Live deployment:** [**sps-group-user-management.vercel.app**](https://sps-group-user-management.vercel.app) — connected to the API on [**Render**](https://sps-group-user-management-server.onrender.com/). For local dev, set `REACT_APP_SERVER_URL` in `.env` (e.g. `http://localhost:3000`).
+
 ## 🎯 What you can do
 
 - **Sign in** — authenticate with email/password; JWT stored in `localStorage`.
