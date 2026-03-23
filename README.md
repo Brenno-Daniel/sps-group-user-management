@@ -19,6 +19,7 @@ npm install
 cp .env.example .env
 # edit .env: PORT, JWT_SECRET
 npm run dev
+# or production-style: npm start
 ```
 
 **2. Web** — new terminal, from repo root:

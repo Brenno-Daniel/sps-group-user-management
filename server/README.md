@@ -51,17 +51,29 @@ Edit `.env` and set at least:
 
 ## 📜 Scripts
 
-| Command              | Description                |
-| -------------------- | -------------------------- |
-| `npm run dev`        | Dev server with nodemon    |
-| `npm test`           | Run Vitest once            |
-| `npm run test:watch` | Vitest watch mode          |
+| Command              | Description |
+| -------------------- | ----------- |
+| `npm run dev`        | Dev server with **nodemon** (reload + inspect on port 7000) |
+| `npm start`          | **Production-style** run: `node src/index.js` (no reload) |
+| `npm run build`      | No-op for this repo (plain JavaScript — no transpile step); useful for CI/PaaS hooks that expect a build script |
+| `npm test`           | Run Vitest once |
+| `npm run test:watch` | Vitest watch mode |
 
 ## ▶️ Running
+
+**Local development** (auto-restart on file changes):
 
 ```bash
 npm run dev
 ```
+
+**Production / simple run** (e.g. Docker, VPS, `NODE_ENV=production`):
+
+```bash
+npm start
+```
+
+Ensure `.env` exists with `PORT` and `JWT_SECRET` before `npm start` in production.
 
 - API base: `http://localhost:<PORT>` (see `.env`)
 - **Swagger UI:** [http://localhost:3000/api-docs](http://localhost:3000/api-docs) (adjust port if needed)

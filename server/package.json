@@ -1,10 +1,12 @@
 {
   "name": "test-sps-server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "license": "MIT",
   "scripts": {
     "dev": "nodemon --inspect=7000 src/index.js",
+    "start": "node src/index.js",
+    "build": "node -e \"console.log('[build] No transpilation; ready to run with npm start.')\"",
     "test": "vitest run",
     "test:watch": "vitest"
   },
