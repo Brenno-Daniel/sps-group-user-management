@@ -37,7 +37,7 @@ export function DeleteUserModal({ isOpen, user, onClose, onDeleted }) {
           </Button>
           <Button
             type="button"
-            className="bg-red-600 text-white hover:bg-red-700 hover:text-white"
+            className="[background-image:none] !bg-red-600 !hover:bg-red-700 hover:text-white"
             onClick={handleConfirm}
             disabled={loading}
           >
