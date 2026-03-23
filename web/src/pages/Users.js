@@ -1,14 +1,17 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { AppLayout } from "../components/layout/AppLayout";
 import { CreateUserModal } from "../components/users/CreateUserModal";
 import { DeleteUserModal } from "../components/users/DeleteUserModal";
 import { EditUserModal } from "../components/users/EditUserModal";
+import { UserSearchInput } from "../components/users/UserSearchInput";
 import { Button, Card } from "../components/ui";
 import { useAuth } from "../contexts/AuthContext";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { fetchUsers } from "../services/userApi";
 import { messageFromAxiosError } from "../utils/apiMessages";
+import { filterUsersBySearchQuery } from "../utils/userListFilter";
 import { getUserTypeLabel } from "../utils/userDisplay";
 
 export default function Users() {
@@ -22,6 +25,9 @@ export default function Users() {
   const [createOpen, setCreateOpen] = useState(false);
   const [editUser, setEditUser] = useState(null);
   const [deleteUser, setDeleteUser] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const debouncedSearch = useDebouncedValue(searchText, 300);
+  const searchFieldId = useId();
 
   const load = useCallback(async () => {
     setListError("");
@@ -70,6 +76,16 @@ export default function Users() {
   }, []);
 
   const headingId = "users-page-title";
+
+  const filteredList = useMemo(
+    () => filterUsersBySearchQuery(list, debouncedSearch),
+    [list, debouncedSearch],
+  );
+
+  const searchHasNoResults =
+    debouncedSearch.trim().length > 0 &&
+    filteredList.length === 0 &&
+    list.length > 0;
 
   const tableContent = useMemo(() => {
     if (loading) {
@@ -132,102 +148,131 @@ export default function Users() {
         </Button>
       </div>
 
+      {!loading && !listError && list.length > 0 ? (
+        <div className="mb-6 w-full">
+          <UserSearchInput
+            id={searchFieldId}
+            value={searchText}
+            onChange={setSearchText}
+          />
+        </div>
+      ) : null}
+
       <Card className="overflow-hidden p-0">
         {tableContent}
         {!loading && !listError && list.length > 0 ? (
           <>
-            <div className="hidden md:block">
-              <div className="overflow-x-auto">
-                <table
-                  className="w-full min-w-[640px] text-left text-sm"
-                  aria-labelledby={headingId}
-                >
-                  <thead className="bg-slate-50 text-xs uppercase tracking-wide text-sps-secondary">
-                    <tr>
-                      <th scope="col" className="px-4 py-3 font-semibold">
-                        Nome
-                      </th>
-                      <th scope="col" className="px-4 py-3 font-semibold">
-                        E-mail
-                      </th>
-                      <th scope="col" className="px-4 py-3 font-semibold">
-                        Tipo
-                      </th>
-                      <th scope="col" className="px-4 py-3 text-right font-semibold">
-                        Ações
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {list.map((u) => (
-                      <tr key={u.id} className="bg-white hover:bg-slate-50/80">
-                        <td className="px-4 py-3 font-medium text-slate-900">
-                          {u.name}
-                        </td>
-                        <td className="px-4 py-3 text-slate-700">{u.email}</td>
-                        <td className="px-4 py-3 text-slate-700">
-                          {getUserTypeLabel(u.type)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              type="button"
-                              variant="icon"
-                              aria-label={`Editar ${u.name}`}
-                              onClick={() => setEditUser(u)}
-                            >
-                              <Pencil className="h-5 w-5" aria-hidden />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="icon"
-                              aria-label={`Excluir ${u.name}`}
-                              onClick={() => setDeleteUser(u)}
-                            >
-                              <Trash2 className="h-5 w-5" aria-hidden />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <ul className="divide-y divide-slate-100 md:hidden">
-              {list.map((u) => (
-                <li key={u.id} className="p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-semibold text-slate-900">{u.name}</p>
-                      <p className="truncate text-sm text-slate-600">{u.email}</p>
-                      <p className="mt-1 text-xs text-sps-secondary">
-                        {getUserTypeLabel(u.type)}
-                      </p>
-                    </div>
-                    <div className="flex shrink-0 gap-2">
-                      <Button
-                        type="button"
-                        variant="icon"
-                        aria-label={`Editar ${u.name}`}
-                        onClick={() => setEditUser(u)}
-                      >
-                        <Pencil className="h-5 w-5" aria-hidden />
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="icon"
-                        onClick={() => setDeleteUser(u)}
-                        aria-label={`Excluir ${u.name}`}
-                      >
-                        <Trash2 className="h-5 w-5" aria-hidden />
-                      </Button>
-                    </div>
+            {searchHasNoResults ? (
+              <p
+                className="px-4 py-12 text-center text-slate-600 sm:px-6"
+                role="status"
+              >
+                Não encontramos resultados para sua pesquisa. Tente outros
+                termos.
+              </p>
+            ) : (
+              <>
+                <div className="hidden md:block">
+                  <div className="overflow-x-auto">
+                    <table
+                      className="w-full min-w-[640px] text-left text-sm"
+                      aria-labelledby={headingId}
+                    >
+                      <thead className="bg-slate-50 text-xs uppercase tracking-wide text-sps-secondary">
+                        <tr>
+                          <th scope="col" className="px-4 py-3 font-semibold">
+                            Nome
+                          </th>
+                          <th scope="col" className="px-4 py-3 font-semibold">
+                            E-mail
+                          </th>
+                          <th scope="col" className="px-4 py-3 font-semibold">
+                            Tipo
+                          </th>
+                          <th scope="col" className="px-4 py-3 text-right font-semibold">
+                            Ações
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {filteredList.map((u) => (
+                          <tr
+                            key={u.id}
+                            className="bg-white hover:bg-slate-50/80"
+                          >
+                            <td className="px-4 py-3 font-medium text-slate-900">
+                              {u.name}
+                            </td>
+                            <td className="px-4 py-3 text-slate-700">
+                              {u.email}
+                            </td>
+                            <td className="px-4 py-3 text-slate-700">
+                              {getUserTypeLabel(u.type)}
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  type="button"
+                                  variant="icon"
+                                  aria-label={`Editar ${u.name}`}
+                                  onClick={() => setEditUser(u)}
+                                >
+                                  <Pencil className="h-5 w-5" aria-hidden />
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="icon"
+                                  aria-label={`Excluir ${u.name}`}
+                                  onClick={() => setDeleteUser(u)}
+                                >
+                                  <Trash2 className="h-5 w-5" aria-hidden />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                </li>
-              ))}
-            </ul>
+                </div>
+
+                <ul className="divide-y divide-slate-100 md:hidden">
+                  {filteredList.map((u) => (
+                    <li key={u.id} className="p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-slate-900">{u.name}</p>
+                          <p className="truncate text-sm text-slate-600">
+                            {u.email}
+                          </p>
+                          <p className="mt-1 text-xs text-sps-secondary">
+                            {getUserTypeLabel(u.type)}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          <Button
+                            type="button"
+                            variant="icon"
+                            aria-label={`Editar ${u.name}`}
+                            onClick={() => setEditUser(u)}
+                          >
+                            <Pencil className="h-5 w-5" aria-hidden />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="icon"
+                            onClick={() => setDeleteUser(u)}
+                            aria-label={`Excluir ${u.name}`}
+                          >
+                            <Trash2 className="h-5 w-5" aria-hidden />
+                          </Button>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </>
         ) : null}
       </Card>
